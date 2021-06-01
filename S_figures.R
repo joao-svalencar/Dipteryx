@@ -13,6 +13,11 @@ plot(log.removed~log.initial, data = ir, pch = 16,
 abline(ir.mod.dry, col = "black")
 abline(ir.mod.wet, col = "red")
 
+# initial-removed graph 2 -------------------------------------------------
+fates$per <- fates$removed/fates$density
+
+plot(per~season, data = fates)
+
 # processing data: calculating necessary information ----------------------
 
 ?ddply
