@@ -111,14 +111,15 @@ unique(predicted)
 plot(predicted)
 
 plot(ir.mod)
+
 # processing data: seed fates multinomial models --------------------------
 
 fates$density <- as.factor(fates$density)
 fates$season <- as.factor(fates$season)
 fates$remnant <- as.factor(fates$remnant)
 
-predictors <- fates[,c(2,3)] #selecting only the columns density and season to the object predictors
-head(predictors) #checking the head of the object
+preds <- fates[,c(2,3)] #selecting only the columns density and season to the object predictors
+head(preds) #checking the head of the object
 
 seeds <- fates[, c(4:7)] #selecting only the columns intact, preyed and dispersed to the object seeds
 head(seeds)
@@ -137,30 +138,45 @@ interaction <- nnet::multinom(seeds ~ season*density, data = preds) #interação
 
 # Comparando modelos por AIC aqui é mais interessante pra ver qual modelo é melhor
 
-AICcmodavg::aictab(list(null, season, density, season_density, interaction), second.ord = F,
+?aictab
+mod.sel <- AICcmodavg::aictab(list(null, season, density, season_density, interaction), second.ord = F,
                   modnames = c("null", "season","density","season_density","interaction"))
 
-# Nesse caso tivemos efeito apenas da densidade.
+capture.output(mod.sel, file = here::here("outputs", "AIC_table.txt"))
 
-summary(modelo_estacao_densidade)
 # O modelo com menor AIC é sempre o melhor, e ele é considerado significativamente melhor que os outros se ele for
 # mais de duas unidades de AIC menor que o outro (avaliamos isso de acordo com o Delta_AIC)
 
-############################################################################################################
-############################################################################################################
-# ANALYSIS Two-Way
-############################################################################################################
-############################################################################################################
-m.per <- fates[,c(4,5,6)] #matrix with seed fates proportions
-m.fac <- fates[,c(2,3)] #matrix with categorical variables
+summary(interaction)
+capture.output(summary(interaction), file = here::here("outputs", "model_summary.txt"))
 
-m.per <- asin(sqrt(m.per)) #square root arc-sin transformation
+#Prediction
+?predict
+predict(interaction, preds, type="prob")
+View(interaction)
+p <- as.data.frame(unique(predict(interaction, preds, type="prob")))
 
-#two-way permanova with adonis from package vegan
+interaction[11]
+coef(interaction)
+p$density <- cbind(rep(c("5", "15", "30"), times=2))
+p$season <- cbind(rep(c("dry", "wet"), each=3))
 
-twperm <- adonis(formula = m.per ~ season * density, data = m.fac, permutations = 999, method = "euclidean", strata = NULL)
-twperm
-twperm$coefficients
+p <- p[,c(6,5,1:4)]
+rownames(p) <- NULL
+
+write.csv(p, here::here("outputs", "tables", "pred_prob.csv"))
+
+ggplot(mapping = aes(p))+
+  geom_point()
+
+cm <- table(predict(interaction), preds$density)
+cm <- table(predict(interaction), preds$season)
+print(cm)
+
+1-sum(diag(cm))/sum(cm)
+
+?ggcoef
+ggcoef(interaction)
 
 ############################################################################################################
 ############################################################################################################

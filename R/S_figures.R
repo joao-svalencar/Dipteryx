@@ -48,9 +48,34 @@ dist_bar
 
 
 # ABOVE IS WORKING, BELOW IS TESTING --------------------------------------
+# kind of working:
+?ggplot
+fates <- ggplot(p, aes(x=density, y=intact)) +
+  labs(x= "Seed Density", y= "Fates probability" )+
+  geom_point(size=2)+
+  scale_y_continuous(limits = c(0, 0.7))+
+  scale_x_discrete(limits=c("5","15","30"))+
+  facet_wrap(~season)
 
+fates + geom_point(aes(x=density, y=preyed), col="red", size=2) +
+  geom_point(aes(x=density, y=dispersed), col="orange", size=2) +
+  geom_point(aes(x=density, y=lost), col="blue", size=2)
 
+#trying some variations
+seed.fates <- ggplot(p, aes(x=density, y=intact, shape=season)) +
+  labs(x= "Seed Density", y= "Fates probability" )+
+  geom_point(size=2)+
+  scale_y_continuous(limits = c(0, 0.7))+
+  scale_x_discrete(limits=c("5","15","30"))+
+  geom_point(aes(x=density, y=preyed), col="red", size=2) +
+  geom_point(aes(x=density, y=dispersed), col="orange", size=2) +
+  geom_point(aes(x=density, y=lost), col="blue", size=2)
 
+seed.fates
+
+str(p)
+p$season <- factor(p$season)
+p$season <- as.character(p$density)
 ############################################################################################################
 ############################################################################################################
 # calculating seed fates proportion
@@ -79,38 +104,12 @@ head(fates.m)
 
 fates.m$value <- asin(sqrt(fates.m$value))
 
-fates_hs <- ggplot(fates.m, aes(value))+
-  geom_histogram(bins=10)+
-  facet_wrap(.~season)
-
-fates_hs
-
 ############################################################################################################
 ############################################################################################################
 # GRAPHS
 ############################################################################################################
 ############################################################################################################
 
-fates_bp <- ggplot(fates, aes(x=density, y=preyed)) +
-  labs(x= "Seed Density", y= "Seeds preyed upon" )+
-  geom_boxplot()+
-  scale_y_continuous(limits = c(0, 1.25))+
-  facet_wrap(~season)
-
-fates_bp
-
-str(fates.m)
-fates.m$density <- as.factor(fates.m$density)
-fates_hs <- ggplot(fates.m, aes(x=value, fill=density)) +
-  geom_bar(position="dodge")+
-  scale_y_continuous(limits = c(0, 30))+
-  facet_grid(.~variable)
-
-fates_hs
-
-?geom_bar
-
-######################################################
 fates.m = melt(fates[-1], id.var=c("density","season"))
 fates.m$season = factor(fates.m$season, levels=c("dry", "wet"))
 
