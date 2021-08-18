@@ -1,4 +1,3 @@
-usethis::create_github_token()
 # reading libraries -------------------------------------------------------
 library(here)
 
@@ -11,6 +10,3 @@ dist <- read.csv(here::here("data", "dist.csv"))
 head(dist)
 str(dist)
 
-?use_github()
-
-usethis::use_github(private=TRUE)
