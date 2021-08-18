@@ -1,11 +1,9 @@
-## dispersal distance graph ------------------------------------------------
 # reading libraries -------------------------------------------------------
 
 library(plyr)
 library(ggplot2)
 
-# initial-removed graph ---------------------------------------------------
-
+# Initial-removed graph Fig. 1 --------------------------------------------
 plot(log.removed~log.initial, data = ir, pch = 16,
      ylab = "Log nº of removed endocarps",
      xlab = "Log initial nº of endocarps")
@@ -13,12 +11,12 @@ plot(log.removed~log.initial, data = ir, pch = 16,
 abline(ir.mod.dry, col = "black")
 abline(ir.mod.wet, col = "red")
 
-# initial-removed graph 2 -------------------------------------------------
-fates$per <- fates$removed/fates$density
-
-plot(per~season, data = fates)
-
+# Dispersal distance bar plot ---------------------------------------------
 # processing data: calculating necessary information ----------------------
+head(dist)
+str(dist)
+dist$season <- as.factor(dist$season)
+dist$density <- as.factor(dist$density)
 
 ?ddply
 dist_sum <- plyr::ddply(dist, c("density", "season"), summarise,
@@ -30,13 +28,11 @@ dist_sum <- plyr::ddply(dist, c("density", "season"), summarise,
 dist_sum
 
 # creating dispersal distance graph ---------------------------------------
-
-?geom_bar
 dist_bar <- ggplot(dist_sum, aes(x=density, y=mean, fill=season)) + 
   geom_bar(position=position_dodge(), stat="identity",
-           colour="black", size=.5, width=.7) +
+           colour="black", size=.5, width=0.7) +
   geom_errorbar(aes(ymin=mean-se, ymax=mean+se), 
-                size=.5, width=.1,position=position_dodge(.7))+
+                size=.5, width=.1,position=position_dodge(0.7))+
   scale_fill_manual(values=c("#FFFFFF", "#CCCCCC"))+
   scale_y_continuous(expand=c(0,0), limits=c(0,8))+
   theme_classic(base_size = 18)+
@@ -45,9 +41,7 @@ dist_bar <- ggplot(dist_sum, aes(x=density, y=mean, fill=season)) +
 
 dist_bar
 
-
-
-# ABOVE IS WORKING, BELOW IS TESTING --------------------------------------
+# WARNING: ABOVE IS WORKING, BELOW IS TESTING --------------------------------------
 # kind of working:
 ?ggplot
 fates <- ggplot(p, aes(x=density, y=intact)) +
@@ -76,6 +70,7 @@ seed.fates
 str(p)
 p$season <- factor(p$season)
 p$season <- as.character(p$density)
+
 ############################################################################################################
 ############################################################################################################
 # calculating seed fates proportion

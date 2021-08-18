@@ -1,41 +1,24 @@
 # reading libraries -------------------------------------------------------
-
-library(here)
 library(nnet)
 library(AICcmodavg)
-
 library(reshape2)
 library(vegan)
 library(GGally)
 
-# loading data ------------------------------------------------------------
-
-fates <- read.csv(here::here("data", "fates.csv"))
-head(fates)
-str(fates)
-
-dist <- read.csv(here::here("data", "dist.csv"))
-head(dist)
-str(dist)
-
 # processing data: initial-removed relationship analysis ------------------
 
-fates$removed <- fates$density - fates$intact
 head(fates)
-fates
 
 ir <- fates[,c(1:3,8)]
 head(ir)
 
-ir$initial <- ir$density + 1
+ir$initial.1 <- ir$density + 1
 ir$removed.1 <- ir$removed + 1
 head(ir)
 
-ir$log.initial <- log10(ir$initial)
+ir$log.initial <- log10(ir$initial.1)
 ir$log.removed <- log10(ir$removed.1)
 head(ir)
-
-ir <- ir[!(ir$season == "dry" & ir$remnant == "bjad"),]
 
 # initial-removed relationship analysis test ------------------------------
 
@@ -67,43 +50,35 @@ fates$season <- as.factor(fates$season)
 fates$remnant <- as.factor(fates$remnant)
 str(fates)
 
-
 # creating full model -----------------------------------------------------
 
 ir.mod <- glm(bin~density + season + density:season, family = binomial, data = fates)
-
 
 # model simplificantion: removing interaction -----------------------------
 
 ir.mod.1 <- glm(bin~density + season, family = binomial, data = fates)
 
-
 # comparing models: with interaction versus without interaction -----------
 
 anova(ir.mod.1, ir.mod, test= "Chisq") # keep the simplest (ir.mod.1)
-
 
 # model simplification: removing the effect of density --------------------
 
 ir.mod.2 <- glm(bin~season, family = binomial, data = fates)
 
-
 # comparing models: density + season versus only season -------------------
 
 anova(ir.mod.2, ir.mod.1, test = 'Chisq') # keep the most complex (ir.mod.1)
 
-
 # model simplification: removing the effect of seasons --------------------
 
 ir.mod.3 <- glm(bin~density, family = binomial, data = fates)
-
 
 # comparing models: density + season versus only density ------------------
 
 anova(ir.mod.3, ir.mod.1, test = 'Chisq') # keep the simplest (ir.mod.3)
 
 summary(ir.mod.3)
-
 
 predicted <- predict(ir.mod.3, type = "response")
 unique(predicted)
