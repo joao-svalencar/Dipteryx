@@ -1,0 +1,17 @@
+Call:
+nnet::multinom(formula = seeds ~ season * density, data = preds)
+
+Coefficients:
+          (Intercept)  seasonwet     density seasonwet:density
+preyed     -2.9549428 0.03864583 0.018505711       0.037921632
+dispersed  -0.4106126 0.80375430 0.007092577       0.006424323
+lost       -3.1604668 3.75743151 0.009076336       0.019701667
+
+Std. Errors:
+          (Intercept) seasonwet     density seasonwet:density
+preyed      0.3903659 0.6637945 0.015300480        0.02551686
+dispersed   0.1482903 0.2538693 0.006001566        0.01058846
+lost        0.4526339 0.4925076 0.018104478        0.01985930
+
+Residual Deviance: 6065.01 
+AIC: 6089.01 

@@ -4,12 +4,15 @@ library(plyr)
 library(ggplot2)
 
 # Initial-removed graph Fig. 1 --------------------------------------------
-plot(log.removed~log.initial, data = ir, pch = 16,
-     ylab = "Log nº of removed endocarps",
-     xlab = "Log initial nº of endocarps")
+plot(log.removed~log.initial, data = ir, pch = 16, cex=0.7,
+     ylab = "Number of removed endocarps (log)",
+     xlab = "Initial number of endocarps (log)")
 
-abline(ir.mod.dry, col = "black")
-abline(ir.mod.wet, col = "red")
+abline(ir.mod.dry, lty=3)
+abline(ir.mod.wet, lty=1)
+#abline(ir.mod, lty=3, col='red')
+?legend
+legend("topleft", c("Dry","Wet"), lty=c(3,1), cex=0.7)
 
 # Dispersal distance bar plot ---------------------------------------------
 # processing data: calculating necessary information ----------------------
