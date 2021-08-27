@@ -31,7 +31,7 @@ summary(ir.mod.wet)
 ir.mod <- lm(log.removed~log.initial, data = ir)
 summary(ir.mod)
 
-
+# t <- b1-b2/Sb1-b2
 # processing data: seed fates multinomial models --------------------------
 
 fates$density <- as.factor(fates$density)
