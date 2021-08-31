@@ -1,0 +1,10 @@
+
+Model selection based on AIC:
+
+                K     AIC Delta_AIC AICWt Cum.Wt       LL
+interaction    18 5197.21      0.00   0.9    0.9 -2580.61
+season_density 12 5201.67      4.45   0.1    1.0 -2588.83
+season          6 5216.87     19.65   0.0    1.0 -2602.43
+density         9 5950.76    753.55   0.0    1.0 -2966.38
+null            3 5963.57    766.36   0.0    1.0 -2978.79
+

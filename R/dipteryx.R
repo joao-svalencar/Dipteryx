@@ -4,7 +4,7 @@ library(AICcmodavg)
 library(reshape2)
 library(vegan)
 library(GGally)
-
+library(foreign)
 # processing data: initial-removed relationship analysis ------------------
 
 head(fates)
@@ -28,10 +28,9 @@ summary(ir.mod.dry)
 ir.mod.wet <- lm(log.removed~log.initial, data = ir[ir$season == "wet",])
 summary(ir.mod.wet)
 
-ir.mod <- lm(log.removed~log.initial, data = ir)
+ir.mod <- lm(log.removed~log.initial*season, data = ir)
 summary(ir.mod)
 
-# t <- b1-b2/Sb1-b2
 # processing data: seed fates multinomial models --------------------------
 
 fates$density <- as.factor(fates$density)
@@ -58,45 +57,18 @@ interaction <- nnet::multinom(seeds ~ season*density, data = preds) #interação
 
 # Comparando modelos por AIC aqui é mais interessante pra ver qual modelo é melhor
 
-?aictab
 mod.sel <- AICcmodavg::aictab(list(null, season, density, season_density, interaction), second.ord = F,
                   modnames = c("null", "season","density","season_density","interaction"))
 
-capture.output(mod.sel, file = here::here("outputs", "AIC_table.txt"))
+mod.sel
+
+capture.output(mod.sel, file = here::here("outputs", "tables", "AIC_table.txt"))
 
 # O modelo com menor AIC é sempre o melhor, e ele é considerado significativamente melhor que os outros se ele for
 # mais de duas unidades de AIC menor que o outro (avaliamos isso de acordo com o Delta_AIC)
 
 summary(interaction)
-capture.output(summary(interaction), file = here::here("outputs", "model_summary.txt"))
-
-#Prediction
-?predict
-predict(interaction, preds, type="prob")
-View(interaction)
-p <- as.data.frame(unique(predict(interaction, preds, type="prob")))
-
-interaction[11]
-coef(interaction)
-p$density <- cbind(rep(c("5", "15", "30"), times=2))
-p$season <- cbind(rep(c("dry", "wet"), each=3))
-
-p <- p[,c(6,5,1:4)]
-rownames(p) <- NULL
-
-write.csv(p, here::here("outputs", "tables", "pred_prob.csv"))
-
-ggplot(mapping = aes(p))+
-  geom_point()
-
-cm <- table(predict(interaction), preds$density)
-cm <- table(predict(interaction), preds$season)
-print(cm)
-
-1-sum(diag(cm))/sum(cm)
-
-?ggcoef
-ggcoef(interaction)
+capture.output(summary(interaction), file = here::here("outputs", "tables", "model_summary.txt"))
 
 ############################################################################################################
 ############################################################################################################
