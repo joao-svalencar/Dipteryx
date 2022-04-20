@@ -47,8 +47,6 @@ seeds <- as.matrix(seeds)
 
 # seed fates multinomial models -------------------------------------------
 
-?multinom
-
 null <- nnet::multinom(seeds ~ 1, data = preds) # sem nenhum efeito das preditoras
 season <- nnet::multinom(seeds ~ season, data = preds) #efeito apenas da estação
 density <- nnet::multinom(seeds ~ density, data = preds) #efeito apenas da densidade
